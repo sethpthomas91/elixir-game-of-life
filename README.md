@@ -24,22 +24,37 @@ mix compile
 iex -S mix
 ```
 
-4. Follow on instructions needed for running the application.
+4. Run the following command to play your first game. Feel free to copy and paste some of the examples provided below to see more shapes!
+Runner.setup(boardSize, aliveCellArray)
+boardSize must be an integer.
+aliveCellArray must follow the format below:
+[{x,y},{x,y}...]
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `gol` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:gol, "~> 0.1.0"}
-  ]
-end
+```
+Runner.setup(3, [{1,2}, {2,2}, {3,2}])
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/gol>.
+You can also run a random game:
+```
+Runner.runRandomGame(40)
+```
+You can change the size by changing the integer in the brackets.
+
+Fun things to try!
+The blinker: 
+```
+Runner.setup(3, [{1,2}, {2,2}, {3,2}])
+```
+The toad: 
+```
+Runner.setup(4, [{2,2}, {3,2}, {4,2}, {1,3}, {2,3}, {3,3}])
+```
+The beacon: 
+```
+Runner.setup(4, [{1,1}, {2,1}, {1,2}, {4,4}, {4, 3}, {3,4}])
+```
+
+
+5. Exiting the program
+There are two ways that you will exit this program. The first will be if there are no more living cells. The second means that you have a ever living board. In this case hit ctr + c twice to exit the mix environment.
 

@@ -1,5 +1,6 @@
 defmodule GolTest do
   use ExUnit.Case
+  import ExUnit.CaptureIO
   doctest Gol
 
   test "tests a dead world is empty" do
@@ -14,6 +15,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.worldEmpty?(newWorld) == true
   end
 
@@ -29,6 +31,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.worldEmpty?(newWorld) == false
   end
 
@@ -44,9 +47,11 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     aliveCells = [
       {1, 1}
     ]
+
     expect = [
       {{1, 1}, 1},
       {{1, 2}, 0},
@@ -58,6 +63,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.setAliveCells(oldWorld, aliveCells) == expect
   end
 
@@ -73,10 +79,12 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     aliveCells = [
       {1, 1},
       {2, 2}
     ]
+
     expect = [
       {{1, 1}, 1},
       {{1, 2}, 0},
@@ -88,6 +96,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.setAliveCells(oldWorld, aliveCells) == expect
   end
 
@@ -103,11 +112,13 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     aliveCells = [
       {1, 1},
       {3, 1},
       {0, 1}
     ]
+
     expect = [
       {{1, 1}, 1},
       {{1, 2}, 0},
@@ -119,6 +130,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.setAliveCells(oldWorld, aliveCells) == expect
   end
 
@@ -134,6 +146,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     expectedWorld = [
       {{1, 1}, 0},
       {{1, 2}, 0},
@@ -145,6 +158,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.tick(oldWorld) == expectedWorld
   end
 
@@ -160,6 +174,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     expectedWorld = [
       {{1, 1}, 0},
       {{1, 2}, 0},
@@ -171,6 +186,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.tick(oldWorld) == expectedWorld
   end
 
@@ -186,6 +202,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     expectedWorld = [
       {{1, 1}, 1},
       {{1, 2}, 1},
@@ -197,6 +214,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.tick(oldWorld) == expectedWorld
   end
 
@@ -212,6 +230,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     expectedWorld = [
       {{1, 1}, 0},
       {{1, 2}, 0},
@@ -223,6 +242,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.tick(oldWorld) == expectedWorld
   end
 
@@ -238,6 +258,7 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     expectedWorld = [
       {{1, 1}, 0},
       {{1, 2}, 0},
@@ -249,7 +270,28 @@ defmodule GolTest do
       {{3, 2}, 0},
       {{3, 3}, 0}
     ]
+
     assert Gol.tick(oldWorld) == expectedWorld
   end
 
+  test "test that a dead world is printed to the terminal" do
+    world = [
+      {{1, 1}, 0},
+      {{1, 2}, 0},
+      {{1, 3}, 0},
+      {{2, 1}, 0},
+      {{2, 2}, 0},
+      {{2, 3}, 0},
+      {{3, 1}, 0},
+      {{3, 2}, 0},
+      {{3, 3}, 0}
+    ]
+
+    clearScreen = "\e[H\e[J\n"
+    row1 = "000\n"
+    row2 = "000\n"
+    row3 = "000\n"
+    display = clearScreen <> row1 <> row2 <> row3
+    assert capture_io(fn -> Gol.display(world) end) == display
+  end
 end

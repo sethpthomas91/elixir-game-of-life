@@ -1,5 +1,4 @@
 defmodule Gol do
-
   def createNewWorld(size) do
     for col <- 1..size, row <- 1..size, into: [], do: {{col, row}, 0}
   end
@@ -17,24 +16,28 @@ defmodule Gol do
   end
 
   def setAliveCells(oldWorld, aliveCells) do
-    [head | remainingCells ] = aliveCells
+    [head | remainingCells] = aliveCells
 
-    newWorld = Enum.map(oldWorld, fn cell ->
+    newWorld =
+      Enum.map(oldWorld, fn cell ->
         grid = elem(cell, 0)
-        if (grid == head) do
+
+        if grid == head do
           {grid, 1}
         else
           cell
         end
       end)
+
     setAliveCells(newWorld, remainingCells)
   end
 
   def getCellValueAt(grid, world) do
-    matchedCell = Enum.find(world, fn cell ->
-      newCellGrid = elem(cell, 0)
-      grid == newCellGrid
-    end)
+    matchedCell =
+      Enum.find(world, fn cell ->
+        newCellGrid = elem(cell, 0)
+        grid == newCellGrid
+      end)
 
     if matchedCell == nil, do: 0, else: elem(matchedCell, 1)
   end
@@ -42,48 +45,48 @@ defmodule Gol do
   def getNeighborGridList(grid) do
     x = elem(grid, 0)
     y = elem(grid, 1)
+
     [
-      {x-1, y-1},
-      {x , y-1},
-      {x+1, y-1},
-      {x-1, y},
-      {x+1, y},
-      {x-1, y+1},
-      {x, y+1},
-      {x+1,y+1}
+      {x - 1, y - 1},
+      {x, y - 1},
+      {x + 1, y - 1},
+      {x - 1, y},
+      {x + 1, y},
+      {x - 1, y + 1},
+      {x, y + 1},
+      {x + 1, y + 1}
     ]
   end
 
   def getSumOfAliveNeighbors(neighborList, world) do
-    neighborValList = Enum.map(neighborList, fn grid ->
-      getCellValueAt(grid, world)
-    end)
+    neighborValList =
+      Enum.map(neighborList, fn grid ->
+        getCellValueAt(grid, world)
+      end)
 
-    Enum.reduce(neighborValList, fn value, sum -> value + sum end )
+    Enum.reduce(neighborValList, fn value, sum -> value + sum end)
   end
 
   def tick(oldWorld) do
-    tick(oldWorld, [])
-  end
+    newWorld =
+      Enum.map(oldWorld, fn cell ->
+        neighbors = getNeighborGridList(elem(cell, 0))
+        aliveNeighbors = getSumOfAliveNeighbors(neighbors, oldWorld)
+        oldCellGrid = elem(cell, 0)
+        oldCellValue = elem(cell, 1)
 
-  def tick(oldWorld, newWorld) do
+        if oldCellValue == 1 do
+          handleAliveCell(oldCellGrid, aliveNeighbors)
+        else
+          handleDeadCell(oldCellGrid, aliveNeighbors)
+        end
+      end)
 
-    newWorld = Enum.map(oldWorld, fn cell ->
-      neighbors = getNeighborGridList(elem(cell, 0))
-      aliveNeighbors = getSumOfAliveNeighbors(neighbors, oldWorld)
-      oldCellGrid = elem(cell, 0)
-      oldCellValue = elem(cell, 1)
-      if (oldCellValue == 1) do
-        handleAliveCell(oldCellGrid, aliveNeighbors)
-      else
-        handleDeadCell(oldCellGrid, aliveNeighbors)
-      end
-    end)
     newWorld
   end
 
   def handleAliveCell(grid, numAliveNeighbors) do
-    if (numAliveNeighbors == 2 || numAliveNeighbors == 3) do
+    if numAliveNeighbors == 2 || numAliveNeighbors == 3 do
       {grid, 1}
     else
       {grid, 0}
@@ -91,11 +94,26 @@ defmodule Gol do
   end
 
   def handleDeadCell(grid, numAliveNeighbors) do
-    if (numAliveNeighbors == 3) do
+    if numAliveNeighbors == 3 do
       {grid, 1}
     else
       {grid, 0}
     end
   end
 
+  def display(world) do
+    IO.write("\e[H\e[J\n")
+    rowSize = round(:math.sqrt(Enum.count(world)))
+
+    for x <- 1..rowSize do
+      for y <- 1..rowSize do
+        getCellValueAt({x, y}, world)
+        |> IO.write()
+
+        IO.write("")
+      end
+
+      IO.write("\n")
+    end
+  end
 end
