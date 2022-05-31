@@ -12,27 +12,22 @@ defmodule Gol do
     elem(cell, 1) == 1
   end
 
-  def setAliveCells(_oldWorld, [], accum) do
-    accum
-  end
-
-  def setAliveCells(oldWorld, aliveCells, accum) do
-    [head | tail] = aliveCells
-
-    Enum.each(oldWorld, fn cell ->
-        grid = elem(cell, 0)
-        if (grid != head) do
-          [{grid, 0} | accum]
-        else
-          [{grid, 1} | accum]
-        end
-      end)
-
-    setAliveCells(oldWorld, tail, accum)
+  def setAliveCells(oldWorld, []) do
+    oldWorld
   end
 
   def setAliveCells(oldWorld, aliveCells) do
-    setAliveCells(oldWorld, aliveCells, [])
+    [head | remainingCells ] = aliveCells
+
+    newWorld = Enum.map(oldWorld, fn cell ->
+        grid = elem(cell, 0)
+        if (grid == head) do
+          {grid, 1}
+        else
+          cell
+        end
+      end)
+    setAliveCells(newWorld, remainingCells)
   end
 
 
